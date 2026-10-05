@@ -1,0 +1,64 @@
+{% extends "tienda/base.html" %}
+{% block title %}Finalizar pedido | LapZone{% endblock %}
+{% block content %}
+<div class="checkout-container container py-5">
+    <div class="checkout-main">
+        <h1 class="fw-bold mb-1">Finalizar pedido</h1>
+        <p class="checkout-subtitle">Configura la entrega y el pago antes de confirmar.</p>
+        <form method="POST" id="checkout-form">{% csrf_token %}
+            <div class="checkout-card shadow-sm">
+                <h2 class="h4 fw-semibold">1. Tipo de entrega</h2><p class="section-description">¿Cómo quieres recibir tu pedido?</p>
+                <div class="option-grid">
+                    <label class="option-card"><input class="form-check-input" type="radio" name="tipo_entrega" value="domicilio" {% if direcciones %}checked{% endif %}><div class="option-content"><strong>Entrega a domicilio</strong><span>Entrega dentro de La Vega.</span></div></label>
+                    <label class="option-card"><input class="form-check-input" type="radio" name="tipo_entrega" value="retiro_tienda" {% if not direcciones %}checked{% endif %}><div class="option-content"><strong>Retiro en tienda</strong><span>Recoge tu pedido directamente en LapZone.</span></div></label>
+                </div>
+            </div>
+
+            <div class="checkout-card shadow-sm" id="direccion-section">
+                <div class="d-flex justify-content-between align-items-start gap-3"><div><h2 class="h4 fw-semibold">2. Dirección de entrega</h2><p class="section-description">Solo se usa para entrega a domicilio.</p></div><a class="btn btn-outline-primary btn-sm" href="{% url 'direccion_crear' %}">Agregar dirección</a></div>
+                {% if direcciones %}<div class="address-list">{% for direccion in direcciones %}<label class="address-card"><input class="form-check-input" type="radio" name="direccion_id" value="{{ direccion.id }}" {% if direccion.es_principal or forloop.first %}checked{% endif %}><div><strong>{{ direccion.sector }}{% if direccion.es_principal %} · Principal{% endif %}</strong><p>{{ direccion.calle }}</p>{% if direccion.referencia %}<p>Referencia: {{ direccion.referencia }}</p>{% endif %}<p>{{ direccion.ciudad }}</p></div></label>{% endfor %}</div>{% else %}<div class="alert alert-warning mb-0">No tienes direcciones registradas. Puedes elegir retiro en tienda o agregar una dirección.</div>{% endif %}
+            </div>
+
+            <div class="checkout-card shadow-sm">
+                <h2 class="h4 fw-semibold">3. Método de pago</h2><p class="section-description">Selecciona cómo quieres pagar.</p>
+                <div class="option-grid">
+                    <label class="option-card"><input class="form-check-input" type="radio" name="metodo_pago" value="efectivo" checked><div class="option-content"><strong>Efectivo</strong><span>Paga al recibir o retirar el pedido.</span></div></label>
+                    <label class="option-card"><input class="form-check-input" type="radio" name="metodo_pago" value="transferencia"><div class="option-content"><strong>Transferencia bancaria</strong><span>El pago queda pendiente de verificación.</span></div></label>
+                </div>
+                <div id="transferencia-section" class="mt-3 d-none"><label class="form-label" for="referencia_transaccion">Referencia de transferencia (opcional)</label><input class="form-control" id="referencia_transaccion" name="referencia_transaccion" maxlength="100" placeholder="Número o referencia del comprobante"><div class="form-text">No escribas contraseñas ni datos sensibles.</div></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">Confirmar pedido</button>
+        </form>
+    </div>
+
+    <aside class="checkout-summary shadow-sm">
+        <h2 class="h4 fw-semibold">Resumen del pedido</h2>
+        <div class="summary-products">{% for detalle in detalles %}<div class="summary-product"><div><strong>{{ detalle.producto.nombre }}</strong><span>{{ detalle.cantidad }} × RD$ {{ detalle.producto.precio|floatformat:2 }}</span></div><strong>RD$ {{ detalle.subtotal|floatformat:2 }}</strong></div>{% endfor %}</div>
+        <div class="summary-total"><span>Total</span><strong>RD$ {{ total|floatformat:2 }}</strong></div>
+        <div class="alert alert-light border mt-3 mb-0 small">Pedidos disponibles para clientes de La Vega.</div>
+    </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+    const deliveryRadios = document.querySelectorAll('input[name="tipo_entrega"]');
+    const paymentRadios = document.querySelectorAll('input[name="metodo_pago"]');
+    const addressSection = document.getElementById('direccion-section');
+    const transferSection = document.getElementById('transferencia-section');
+
+    function updateDelivery() {
+        const selected = document.querySelector('input[name="tipo_entrega"]:checked');
+        if (addressSection && selected) addressSection.classList.toggle('checkout-disabled', selected.value === 'retiro_tienda');
+    }
+    function updatePayment() {
+        const selected = document.querySelector('input[name="metodo_pago"]:checked');
+        if (transferSection && selected) transferSection.classList.toggle('d-none', selected.value !== 'transferencia');
+    }
+    deliveryRadios.forEach(r => r.addEventListener('change', updateDelivery));
+    paymentRadios.forEach(r => r.addEventListener('change', updatePayment));
+    updateDelivery(); updatePayment();
+})();
+</script>
+{% endblock %}

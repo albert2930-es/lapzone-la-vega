@@ -1,0 +1,5 @@
+{% extends "tienda/base.html" %}
+{% block title %}{{ titulo }} | LapZone{% endblock %}
+{% block content %}
+<section class="auth-page"><div class="auth-box"><p class="section-small">LA VEGA</p><h1>{{ titulo }}</h1><p class="auth-description">Las entregas a domicilio del proyecto están limitadas a La Vega.</p><form method="POST" novalidate>{% csrf_token %}{% for field in form %}<div class="mb-3 {% if field.name == 'es_principal' %}form-check{% endif %}">{% if field.name == 'es_principal' %}{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}{% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}</div>{% endfor %}<div class="d-grid gap-2"><button class="btn btn-primary" type="submit">Guardar dirección</button><a class="btn btn-outline-secondary" href="{% url 'mis_direcciones' %}">Cancelar</a></div></form></div></section>
+{% endblock %}

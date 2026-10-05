@@ -1,0 +1,455 @@
+{% extends "tienda/base.html" %}
+{% block title %}Pedido #{{ pedido.id }} confirmado | LapZone{% endblock %}
+
+{% block extra_head %}
+<style>
+    .lz-success-page {
+        padding: 58px 18px 76px;
+        background:
+            radial-gradient(circle at 12% 8%, rgba(37, 99, 235, .09), transparent 24%),
+            radial-gradient(circle at 90% 35%, rgba(59, 130, 246, .07), transparent 22%),
+            #f4f7fb;
+    }
+
+    .lz-success-wrap {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+    }
+
+    .lz-success-card {
+        overflow: hidden;
+        border: 1px solid #dce5f0;
+        border-radius: 28px;
+        background: #ffffff;
+        box-shadow: 0 24px 70px rgba(15, 23, 42, .12);
+    }
+
+    .lz-success-hero {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 22px;
+        padding: 38px 42px;
+        color: #ffffff;
+        background:
+            radial-gradient(circle at 86% 15%, rgba(96, 165, 250, .26), transparent 28%),
+            linear-gradient(120deg, #07111f 0%, #0d2747 58%, #1255a0 100%);
+    }
+
+    .lz-success-check {
+        width: 70px;
+        height: 70px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 22px;
+        color: #ffffff;
+        background: #16a34a;
+        box-shadow: 0 14px 32px rgba(22, 163, 74, .28);
+    }
+
+    .lz-success-eyebrow {
+        margin: 0 0 7px;
+        color: #93c5fd;
+        font-size: .76rem;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+    }
+
+    .lz-success-hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3.15rem);
+        line-height: 1.04;
+        font-weight: 800;
+        letter-spacing: -.035em;
+    }
+
+    .lz-success-hero-copy {
+        margin: 0;
+        max-width: 720px;
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .lz-order-number {
+        min-width: 170px;
+        padding: 16px 19px;
+        text-align: right;
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 17px;
+        background: rgba(255,255,255,.08);
+        backdrop-filter: blur(5px);
+    }
+
+    .lz-order-number span,
+    .lz-order-number strong,
+    .lz-order-number small { display: block; }
+    .lz-order-number span { color: #bfdbfe; font-size: .75rem; text-transform: uppercase; letter-spacing: .10em; }
+    .lz-order-number strong { margin: 2px 0 1px; font-size: 1.75rem; line-height: 1.1; }
+    .lz-order-number small { color: #cbd5e1; font-size: .75rem; }
+
+    .lz-order-steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        padding: 22px 30px;
+        border-bottom: 1px solid #e8edf4;
+        background: #fbfdff;
+    }
+
+    .lz-step {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+        padding: 12px 14px;
+        border: 1px solid #e5ebf3;
+        border-radius: 14px;
+        background: #ffffff;
+    }
+
+    .lz-step-number {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        color: #64748b;
+        background: #edf2f7;
+        font-weight: 800;
+    }
+
+    .lz-step.is-active .lz-step-number {
+        color: #ffffff;
+        background: #2563eb;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, .20);
+    }
+
+    .lz-step strong,
+    .lz-step small { display: block; }
+    .lz-step strong { color: #0f172a; font-size: .9rem; line-height: 1.2; }
+    .lz-step small { margin-top: 3px; color: #64748b; font-size: .76rem; line-height: 1.25; }
+
+    .lz-success-content {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(300px, .72fr);
+        gap: 24px;
+        padding: 30px;
+    }
+
+    .lz-success-main,
+    .lz-success-side {
+        display: grid;
+        align-content: start;
+        gap: 20px;
+        min-width: 0;
+    }
+
+    .lz-panel {
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 19px;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .035);
+    }
+
+    .lz-panel-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .lz-panel-kicker {
+        margin: 0 0 4px;
+        color: #3b82f6;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+
+    .lz-panel h2 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 1.32rem;
+        font-weight: 800;
+        letter-spacing: -.02em;
+    }
+
+    .lz-status {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        padding: 7px 12px;
+        border-radius: 999px;
+        color: #92400e;
+        background: #fff3cd;
+        font-size: .78rem;
+        font-weight: 800;
+    }
+
+    .lz-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .lz-meta-item {
+        padding: 17px;
+        border: 1px solid #edf1f6;
+        border-radius: 14px;
+        background: #f8fafc;
+    }
+
+    .lz-meta-item span,
+    .lz-meta-item strong { display: block; }
+    .lz-meta-item span { margin-bottom: 5px; color: #64748b; font-size: .78rem; }
+    .lz-meta-item strong { color: #111827; font-size: 1rem; line-height: 1.35; }
+    .lz-meta-item.is-total strong { color: #1d4ed8; font-size: 1.18rem; }
+
+    .lz-products {
+        display: grid;
+        gap: 0;
+    }
+
+    .lz-product-row {
+        display: grid;
+        grid-template-columns: 62px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .lz-product-row:first-child { padding-top: 0; }
+    .lz-product-row:last-child { padding-bottom: 0; border-bottom: 0; }
+
+    .lz-product-thumb {
+        width: 62px;
+        height: 62px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 13px;
+        background: #f8fafc;
+    }
+
+    .lz-product-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 5px;
+    }
+
+    .lz-product-fallback {
+        color: #94a3b8;
+        font-size: .72rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .lz-product-info strong,
+    .lz-product-info span { display: block; }
+    .lz-product-info strong { color: #0f172a; font-size: .94rem; }
+    .lz-product-info span { margin-top: 4px; color: #64748b; font-size: .8rem; }
+    .lz-product-price { color: #0f172a; font-size: .94rem; font-weight: 800; white-space: nowrap; }
+
+    .lz-delivery-box {
+        display: grid;
+        gap: 7px;
+        margin-top: 15px;
+        padding: 17px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #edf1f6;
+    }
+
+    .lz-delivery-box strong { color: #0f172a; }
+    .lz-delivery-box span { color: #64748b; font-size: .88rem; }
+
+    .lz-side-note {
+        margin: 16px 0 0;
+        color: #64748b;
+        font-size: .82rem;
+        line-height: 1.6;
+    }
+
+    .lz-action-stack {
+        display: grid;
+        gap: 10px;
+    }
+
+    .lz-action-stack .btn {
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        font-weight: 750;
+    }
+
+    @media (max-width: 980px) {
+        .lz-success-hero { grid-template-columns: auto minmax(0, 1fr); }
+        .lz-order-number { grid-column: 2; width: fit-content; text-align: left; }
+        .lz-success-content { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+        .lz-success-page { padding: 28px 12px 48px; }
+        .lz-success-card { border-radius: 20px; }
+        .lz-success-hero { grid-template-columns: 1fr; padding: 28px 22px; }
+        .lz-success-check { width: 58px; height: 58px; border-radius: 17px; }
+        .lz-order-number { grid-column: 1; width: 100%; text-align: left; }
+        .lz-order-steps { grid-template-columns: 1fr; padding: 18px; }
+        .lz-success-content { padding: 18px; gap: 18px; }
+        .lz-panel { padding: 19px; }
+        .lz-meta-grid { grid-template-columns: 1fr; }
+        .lz-panel-heading { align-items: flex-start; flex-direction: column; }
+        .lz-product-row { grid-template-columns: 52px minmax(0,1fr); }
+        .lz-product-thumb { width: 52px; height: 52px; }
+        .lz-product-price { grid-column: 2; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="lz-success-page">
+    <div class="lz-success-wrap">
+        <article class="lz-success-card">
+            <header class="lz-success-hero">
+                <div class="lz-success-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <p class="lz-success-eyebrow">Pedido registrado</p>
+                    <h1>¡Tu pedido está confirmado!</h1>
+                    <p class="lz-success-hero-copy">Gracias por comprar en LapZone. Tu pedido fue guardado correctamente y ya está disponible en tu historial.</p>
+                </div>
+
+                <div class="lz-order-number">
+                    <span>Número de pedido</span>
+                    <strong>#{{ pedido.id }}</strong>
+                    <small>{{ pedido.fecha_pedido|date:"d/m/Y · h:i A" }}</small>
+                </div>
+            </header>
+
+            <div class="lz-order-steps" aria-label="Progreso del pedido">
+                <div class="lz-step is-active">
+                    <div class="lz-step-number">1</div>
+                    <div><strong>Pedido recibido</strong><small>Registrado correctamente</small></div>
+                </div>
+                <div class="lz-step">
+                    <div class="lz-step-number">2</div>
+                    <div><strong>Preparación</strong><small>El equipo procesará tu compra</small></div>
+                </div>
+                <div class="lz-step">
+                    <div class="lz-step-number">3</div>
+                    <div><strong>Entrega</strong><small>Domicilio o retiro en tienda</small></div>
+                </div>
+            </div>
+
+            <div class="lz-success-content">
+                <div class="lz-success-main">
+                    <section class="lz-panel">
+                        <div class="lz-panel-heading">
+                            <div>
+                                <p class="lz-panel-kicker">Resumen</p>
+                                <h2>Detalles del pedido</h2>
+                            </div>
+                            <span class="lz-status">{{ pedido.get_estado_display }}</span>
+                        </div>
+
+                        <div class="lz-meta-grid">
+                            <div class="lz-meta-item is-total">
+                                <span>Total pagadero</span>
+                                <strong>RD$ {{ pedido.total|floatformat:2 }}</strong>
+                            </div>
+                            <div class="lz-meta-item">
+                                <span>Tipo de entrega</span>
+                                <strong>{{ pedido.get_tipo_entrega_display }}</strong>
+                            </div>
+                            <div class="lz-meta-item">
+                                <span>Método de pago</span>
+                                <strong>{{ pedido.pago.get_metodo_display }}</strong>
+                            </div>
+                            <div class="lz-meta-item">
+                                <span>Estado del pago</span>
+                                <strong>{{ pedido.pago.get_estado_display }}</strong>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="lz-panel">
+                        <div class="lz-panel-heading">
+                            <div>
+                                <p class="lz-panel-kicker">Productos</p>
+                                <h2>Lo que compraste</h2>
+                            </div>
+                        </div>
+
+                        <div class="lz-products">
+                            {% for detalle in pedido.detalles.all %}
+                                <div class="lz-product-row">
+                                    <div class="lz-product-thumb">
+                                        {% if detalle.producto.imagen %}
+                                            <img src="{{ detalle.producto.imagen }}" alt="{{ detalle.producto.nombre }}">
+                                        {% else %}
+                                            <span class="lz-product-fallback">Sin imagen</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="lz-product-info">
+                                        <strong>{{ detalle.producto.nombre }}</strong>
+                                        <span>{{ detalle.producto.marca }} · Cantidad: {{ detalle.cantidad }}</span>
+                                    </div>
+                                    <div class="lz-product-price">RD$ {{ detalle.subtotal|floatformat:2 }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="lz-success-side">
+                    <section class="lz-panel">
+                        <p class="lz-panel-kicker">Entrega</p>
+                        <h2>Información de entrega</h2>
+
+                        {% if pedido.direccion %}
+                            <div class="lz-delivery-box">
+                                <strong>{{ pedido.direccion.sector }}</strong>
+                                <span>{{ pedido.direccion.calle }}</span>
+                                {% if pedido.direccion.referencia %}<span>Referencia: {{ pedido.direccion.referencia }}</span>{% endif %}
+                                <span>{{ pedido.direccion.ciudad }}</span>
+                            </div>
+                        {% else %}
+                            <div class="lz-delivery-box">
+                                <strong>Retiro en tienda</strong>
+                                <span>Tu pedido será preparado para retirarlo en LapZone La Vega.</span>
+                            </div>
+                        {% endif %}
+
+                        <p class="lz-side-note">Puedes consultar el estado del pedido en cualquier momento desde la sección “Mis pedidos”.</p>
+                    </section>
+
+                    <section class="lz-panel">
+                        <p class="lz-panel-kicker">Siguiente paso</p>
+                        <div class="lz-action-stack">
+                            <a href="{% url 'mis_pedidos' %}" class="btn btn-primary">Ver mis pedidos</a>
+                            <a href="{% url 'productos' %}" class="btn btn-outline-secondary">Seguir comprando</a>
+                            <a href="{% url 'inicio' %}" class="btn btn-light">Volver al inicio</a>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}

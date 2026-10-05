@@ -1,0 +1,52 @@
+{% extends "tienda/base.html" %}
+{% block title %}Iniciar sesión | LapZone{% endblock %}
+{% block content %}
+<section class="auth-page auth-page-modern">
+    <div class="auth-shell">
+        <div class="auth-side-panel">
+            <p class="section-small text-white-50">TU CUENTA LAPZONE</p>
+            <h1>Todo listo para tu próxima compra.</h1>
+            <p>Inicia sesión para usar tu carrito, consultar pedidos y guardar direcciones de entrega en La Vega.</p>
+
+            <div class="auth-feature-list">
+                <div><span>01</span><strong>Carrito personal</strong><small>Conserva y administra tus productos.</small></div>
+                <div><span>02</span><strong>Direcciones guardadas</strong><small>Elige tu dirección al finalizar el pedido.</small></div>
+                <div><span>03</span><strong>Historial de pedidos</strong><small>Consulta compras y estados desde tu cuenta.</small></div>
+            </div>
+        </div>
+
+        <div class="auth-box auth-box-login">
+            <p class="section-small">BIENVENIDO DE NUEVO</p>
+            <h2>Iniciar sesión</h2>
+            <p class="auth-description">Accede a tu cuenta para continuar.</p>
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Entrar a mi cuenta</button>
+            </form>
+
+            <div class="login-address-box">
+                <div class="login-address-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                </div>
+                <div>
+                    <strong>¿Quieres agregar tu dirección?</strong>
+                    <p>Entra con tu cuenta y te llevamos directamente al formulario de dirección.</p>
+                </div>
+                <a href="{% url 'login' %}?next={% url 'direccion_crear' %}" class="btn btn-outline-primary btn-sm">Entrar y agregar dirección</a>
+            </div>
+
+            <p class="auth-footer">¿No tienes una cuenta? <a href="{% url 'registro' %}">Crear cuenta</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

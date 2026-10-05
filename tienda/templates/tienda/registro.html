@@ -1,0 +1,14 @@
+{% extends "tienda/base.html" %}
+{% block title %}Crear cuenta | LapZone{% endblock %}
+{% block content %}
+<section class="auth-page"><div class="auth-box auth-box-wide">
+    <p class="section-small">LAPZONE LA VEGA</p><h1>Crear cuenta</h1><p class="auth-description">Regístrate para comprar productos, guardar direcciones y gestionar pedidos.</p>
+    <form method="POST" novalidate>{% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="row g-3">
+        {% for field in form %}<div class="{% if field.name == 'first_name' or field.name == 'last_name' %}col-md-6{% else %}col-12{% endif %}"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}{% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}</div>{% endfor %}
+        </div><button type="submit" class="btn btn-primary w-100 btn-lg mt-4">Crear cuenta</button>
+    </form>
+    <p class="auth-footer">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
+</div></section>
+{% endblock %}

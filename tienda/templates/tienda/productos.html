@@ -1,0 +1,59 @@
+{% extends "tienda/base.html" %}
+{% block title %}Productos | LapZone{% endblock %}
+{% block content %}
+<section class="catalog container py-5">
+    <div class="catalog-header">
+        <p class="section-small">LAPZONE LA VEGA</p>
+        <h1>Nuestro catálogo</h1>
+        <p>Busca por nombre, marca, categoría y rango de precio.</p>
+    </div>
+
+    <form method="GET" class="filters row g-3 align-items-end">
+        <div class="col-lg-4">
+            <label class="form-label">Buscar</label>
+            <input class="form-control" type="search" name="q" placeholder="Laptop, mouse, teclado..." value="{{ request.GET.q|default:'' }}">
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <label class="form-label">Categoría</label>
+            <select class="form-select" name="categoria">
+                <option value="">Todas</option>
+                {% for categoria in categorias %}<option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <label class="form-label">Marca</label>
+            <select class="form-select" name="marca">
+                <option value="">Todas</option>
+                {% for marca in marcas %}<option value="{{ marca }}" {% if request.GET.marca == marca %}selected{% endif %}>{{ marca }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+            <label class="form-label">Desde</label>
+            <input class="form-control" type="number" min="0" step="0.01" name="precio_min" value="{{ request.GET.precio_min|default:'' }}">
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+            <label class="form-label">Hasta</label>
+            <input class="form-control" type="number" min="0" step="0.01" name="precio_max" value="{{ request.GET.precio_max|default:'' }}">
+        </div>
+        <div class="col-lg-2 d-grid"><button class="btn btn-primary" type="submit">Aplicar filtros</button></div>
+        {% if request.GET %}<div class="col-12"><a class="small" href="{% url 'productos' %}">Limpiar filtros</a></div>{% endif %}
+    </form>
+
+    <div class="catalog-grid mt-4">
+        {% for producto in productos %}
+        <article class="product-card">
+            <a class="product-image" href="{% url 'detalle_producto' producto.id %}">
+                {% if producto.imagen %}<img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">{% else %}<span class="image-placeholder">Sin imagen</span>{% endif %}
+            </a>
+            <div class="product-info">
+                <div class="d-flex justify-content-between gap-2"><p class="product-brand">{{ producto.marca }}</p>{% if producto.categoria %}<span class="badge text-bg-light">{{ producto.categoria.nombre }}</span>{% endif %}</div>
+                <h3>{{ producto.nombre }}</h3>
+                <p class="product-description">{{ producto.descripcion|truncatewords:15 }}</p>
+                <p class="small mb-1 {% if producto.stock > 0 %}text-success{% else %}text-danger{% endif %}">{% if producto.stock > 0 %}{{ producto.stock }} disponibles{% else %}Agotado{% endif %}</p>
+                <div class="product-bottom"><strong>RD$ {{ producto.precio|floatformat:2 }}</strong><a href="{% url 'detalle_producto' producto.id %}">Ver producto</a></div>
+            </div>
+        </article>
+        {% empty %}<div class="no-products"><h2>No encontramos productos</h2><p>Prueba con otros filtros o términos de búsqueda.</p></div>{% endfor %}
+    </div>
+</section>
+{% endblock %}

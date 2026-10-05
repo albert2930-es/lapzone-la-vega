@@ -1,0 +1,78 @@
+{% extends "tienda/base.html" %}
+{% block title %}Inicio | LapZone{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-text">
+            <p class="hero-small">LAPZONE LA VEGA</p>
+            <h1>Tecnología que <span>potencia</span> tus ideas.</h1>
+            <p>Encuentra laptops y accesorios para gaming, estudio y trabajo, con entrega local en La Vega.</p>
+            <div class="d-flex gap-2 flex-wrap hero-actions">
+                <a href="{% url 'productos' %}" class="btn btn-primary btn-lg">Explorar productos</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'direccion_crear' %}" class="btn btn-outline-light btn-lg">Agregar dirección</a>
+                {% else %}
+                    <a href="{% url 'registro' %}" class="btn btn-outline-light btn-lg">Crear cuenta</a>
+                    <a href="{% url 'login' %}?next={% url 'direccion_crear' %}" class="btn btn-light btn-lg">Entrar y agregar dirección</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-3 text-center">
+        <div class="col-md-4"><div class="info-tile"><strong>Compra local</strong><span>Atención para clientes de La Vega.</span></div></div>
+        <div class="col-md-4"><div class="info-tile"><strong>Stock actualizado</strong><span>Consulta disponibilidad antes de comprar.</span></div></div>
+        <div class="col-md-4"><div class="info-tile"><strong>Entrega flexible</strong><span>Domicilio o retiro en tienda.</span></div></div>
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="address-quick-card">
+        <div class="address-quick-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </div>
+        <div class="address-quick-copy">
+            <p class="section-small mb-1">ENTREGA LOCAL</p>
+            {% if user.is_authenticated %}
+                <h2>Configura tu dirección antes de comprar</h2>
+                <p>Tienes {{ user.direcciones.count }} dirección{{ user.direcciones.count|pluralize:"es" }} guardada{{ user.direcciones.count|pluralize:"s" }}. Puedes agregar otra o administrar las existentes.</p>
+            {% else %}
+                <h2>Guarda tu dirección para comprar más rápido</h2>
+                <p>Inicia sesión y registra tu dirección de La Vega. La tendrás disponible automáticamente al finalizar tus pedidos.</p>
+            {% endif %}
+        </div>
+        <div class="address-quick-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'direccion_crear' %}" class="btn btn-primary">Agregar dirección</a>
+                <a href="{% url 'mis_direcciones' %}" class="btn btn-outline-secondary">Ver mis direcciones</a>
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'direccion_crear' %}" class="btn btn-primary">Iniciar sesión y agregarla</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="products-section container pb-5">
+    <div class="section-header">
+        <div><p class="section-small">NUESTRO CATÁLOGO</p><h2>Productos destacados</h2></div>
+        <a href="{% url 'productos' %}">Ver todos</a>
+    </div>
+    <div class="product-grid">
+        {% for producto in productos %}
+        <article class="product-card">
+            <a class="product-image" href="{% url 'detalle_producto' producto.id %}">
+                {% if producto.imagen %}<img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">{% else %}<span class="image-placeholder">Sin imagen</span>{% endif %}
+            </a>
+            <div class="product-info">
+                <div class="d-flex justify-content-between gap-2"><p class="product-brand">{{ producto.marca }}</p>{% if producto.categoria %}<span class="badge text-bg-light">{{ producto.categoria.nombre }}</span>{% endif %}</div>
+                <h3>{{ producto.nombre }}</h3>
+                <p class="product-description">{{ producto.descripcion|truncatewords:14 }}</p>
+                <div class="product-bottom"><strong>RD$ {{ producto.precio|floatformat:2 }}</strong><a href="{% url 'detalle_producto' producto.id %}">Ver producto</a></div>
+            </div>
+        </article>
+        {% empty %}<div class="alert alert-info">No hay productos disponibles todavía.</div>{% endfor %}
+    </div>
+</section>
+{% endblock %}
