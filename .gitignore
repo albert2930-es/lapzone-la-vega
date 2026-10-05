@@ -1,0 +1,12 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+config/local_settings.py
+*.log
+*.sql
+*.sqlite3
+.DS_Store
