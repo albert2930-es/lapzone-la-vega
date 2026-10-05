@@ -31,7 +31,7 @@ tienda/
   migrations/           Esquema e integridad MySQL
   templates/tienda/      HTML de la aplicación
   static/tienda/         CSS y recursos gráficos
-  tests.py              23 pruebas automáticas
+  tests.py              24 pruebas automáticas
 docs/                   Guion de la defensa y documentación técnica
 manage.py               Comandos estándar de Django
 iniciar.py              Comandos con configuración .env
@@ -93,3 +93,4 @@ La migración no cambia los registros de negocio. Antes de aplicarla a una base 
 Consultar [el guion de defensa](docs/DEFENSA.md) y [la arquitectura](docs/ARQUITECTURA.md).
 La entrega en plataforma consta del PDF consolidado de las fases 1 a 4 y las diapositivas de presentación.
 La demostración presencial corresponde al estudiante y debe hacerse con el sistema ejecutándose en su equipo.
+
