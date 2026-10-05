@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650">
+  <rect width="900" height="650" rx="36" fill="#f1f5f9"/>
+  <rect x="90" y="90" width="720" height="390" rx="26" fill="#0f172a"/>
+  <rect x="118" y="118" width="664" height="334" rx="16" fill="#dbeafe"/>
+  <rect x="55" y="500" width="790" height="38" rx="19" fill="#2563eb"/>
+  <text x="450" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="62" font-weight="700" fill="#0f172a">Mochila</text>
+  <text x="450" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#475569">Protección y movilidad</text>
+  <text x="450" y="595" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#2563eb">LAPZONE LA VEGA</text>
+</svg>
